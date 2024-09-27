@@ -1,0 +1,12 @@
+[tool.ruff]
+include = ["focus_opt/**/*.py"]
+exclude = ["tests/**/*.py"]
+
+lint.select = ["E", "W", "F"]
+lint.ignore = ["E501"]
+
+line-length = 88
+
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"

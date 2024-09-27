@@ -1,0 +1,4 @@
+include README.md
+include LICENSE
+recursive-include focus_opt *.txt  # Include any .txt files in your package
+recursive-include examples *.ipynb
