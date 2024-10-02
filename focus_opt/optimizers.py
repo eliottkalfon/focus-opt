@@ -11,7 +11,6 @@ import copy
 
 logging.basicConfig(level=logging.INFO)
 
-
 class BaseOptimizer(ABC):
     """
     Abstract base class for all optimizers in the focus_opt package.
@@ -36,22 +35,25 @@ class BaseOptimizer(ABC):
         """
         Initialize the BaseOptimizer.
 
-        Args:
-            hp_space (HyperParameterSpace): The hyperparameter space to explore.
-            evaluation_function (Callable[[Dict[str, Any], int], float]): 
-                Function to evaluate a hyperparameter configuration. 
-                It should accept a config dict and a fidelity level, returning a performance score.
-            max_fidelity (int, optional): Maximum fidelity level for evaluations. Defaults to 1.
-            sh_eta (float, optional): Successive halving proportion. Defaults to 0.5.
-            maximize (bool, optional): Whether to maximize the evaluation score. Defaults to False.
-            score_aggregation (str, optional): Method to aggregate scores across fidelities. 
-                Options include "average". Defaults to "average".
-            score_aggregation_function (Optional[Callable[[List[float]], float]], optional): 
-                Custom function to aggregate scores. If None, defaults to the method specified 
-                by score_aggregation. Defaults to None.
-            initial_config (Optional[dict], optional): Initial hyperparameter configuration to start optimization. 
-                Defaults to None.
-            log_results (bool, optional): Whether to log the results of evaluations. Defaults to False.
+        :param hp_space: The hyperparameter space to explore.
+        :type hp_space: HyperParameterSpace
+        :param evaluation_function: Function to evaluate a hyperparameter configuration. 
+            It should accept a config dict and a fidelity level, returning a performance score.
+        :type evaluation_function: Callable[[Dict[str, Any], int], float]
+        :param max_fidelity: Maximum fidelity level for evaluations, defaults to 1.
+        :type max_fidelity: int, optional
+        :param sh_eta: Successive halving proportion, defaults to 0.5.
+        :type sh_eta: float, optional
+        :param maximize: Whether to maximize the evaluation score, defaults to False.
+        :type maximize: bool, optional
+        :param score_aggregation: Method to aggregate scores across fidelities, defaults to "average".
+        :type score_aggregation: str, optional
+        :param score_aggregation_function: Custom function to aggregate scores. If None, defaults to the method specified by score_aggregation.
+        :type score_aggregation_function: Optional[Callable[[List[float]], float]], optional
+        :param initial_config: Initial hyperparameter configuration to start optimization, defaults to None.
+        :type initial_config: Optional[dict], optional
+        :param log_results: Whether to log the results of evaluations, defaults to False.
+        :type log_results: bool, optional
         """
         self.hp_space = hp_space
         self.evaluation_function = evaluation_function
@@ -71,8 +73,8 @@ class BaseOptimizer(ABC):
         """
         Check if the evaluation function accepts a fidelity parameter.
 
-        Returns:
-            bool: True if the evaluation function accepts a fidelity level, False otherwise.
+        :return: True if the evaluation function accepts a fidelity level, False otherwise.
+        :rtype: bool
         """
         signature = inspect.signature(self.evaluation_function)
         parameters = list(signature.parameters.values())
@@ -94,11 +96,10 @@ class BaseOptimizer(ABC):
         """
         Instantiate a ConfigCandidate from a configuration dictionary.
 
-        Args:
-            config (dict): Hyperparameter configuration.
-
-        Returns:
-            ConfigCandidate: An instance of ConfigCandidate initialized with the given config.
+        :param config: Hyperparameter configuration.
+        :type config: dict
+        :return: An instance of ConfigCandidate initialized with the given config.
+        :rtype: ConfigCandidate
         """
         return ConfigCandidate(
             config=config,
@@ -113,11 +114,10 @@ class BaseOptimizer(ABC):
         """
         Instantiate a list of ConfigCandidates from a list of configuration dictionaries.
 
-        Args:
-            configs (List[dict]): List of hyperparameter configurations.
-
-        Returns:
-            List[ConfigCandidate]: List of ConfigCandidate instances.
+        :param configs: List of hyperparameter configurations.
+        :type configs: List[dict]
+        :return: List of ConfigCandidate instances.
+        :rtype: List[ConfigCandidate]
         """
         return [self.config_to_candidate(config) for config in configs]
 
@@ -129,12 +129,12 @@ class BaseOptimizer(ABC):
         """
         Compare two candidates based on the optimization objective.
 
-        Args:
-            candidate_1 (ConfigCandidate): The first candidate to compare.
-            candidate_2 (ConfigCandidate): The second candidate to compare.
-
-        Returns:
-            bool: True if candidate_1 is better than candidate_2 based on the objective, False otherwise.
+        :param candidate_1: The first candidate to compare.
+        :type candidate_1: ConfigCandidate
+        :param candidate_2: The second candidate to compare.
+        :type candidate_2: ConfigCandidate
+        :return: True if candidate_1 is better than candidate_2 based on the objective, False otherwise.
+        :rtype: bool
         """
         if self.maximize:
             return candidate_1.evaluation_score > candidate_2.evaluation_score
@@ -150,14 +150,14 @@ class BaseOptimizer(ABC):
         """
         Perform the successive halving algorithm on a list of candidates.
 
-        Args:
-            candidates (List[ConfigCandidate]): List of candidates to evaluate.
-            session_context (SessionContext): Context managing the optimization session.
-            min_population_size (Optional[int], optional): Minimum population size to maintain. 
-                If None, no lower bound is enforced. Defaults to None.
-
-        Returns:
-            List[ConfigCandidate]: Reduced list of candidates after successive halving.
+        :param candidates: List of candidates to evaluate.
+        :type candidates: List[ConfigCandidate]
+        :param session_context: Context managing the optimization session.
+        :type session_context: SessionContext
+        :param min_population_size: Minimum population size to maintain. If None, no lower bound is enforced. Defaults to None.
+        :type min_population_size: Optional[int], optional
+        :return: Reduced list of candidates after successive halving.
+        :rtype: List[ConfigCandidate]
         """
         for _ in range(self.max_fidelity):
             for candidate in candidates:
@@ -187,8 +187,8 @@ class BaseOptimizer(ABC):
         """
         Update the best candidate found so far based on the current list of candidates.
 
-        Args:
-            candidates (List[ConfigCandidate]): List of candidates to consider.
+        :param candidates: List of candidates to consider.
+        :type candidates: List[ConfigCandidate]
         """
         fully_evaluated_candidates = [cand for cand in candidates if cand.is_fully_evaluated]
         if len(fully_evaluated_candidates) == 0:
@@ -211,8 +211,8 @@ class BaseOptimizer(ABC):
 
         Must be implemented by subclasses.
 
-        Returns:
-            ConfigCandidate: The best candidate found during optimization.
+        :return: The best candidate found during optimization.
+        :rtype: ConfigCandidate
         """
         raise NotImplementedError
 
@@ -221,9 +221,10 @@ def log_trial(candidate: ConfigCandidate, success: bool = True) -> None:
     """
     Log the result of a trial evaluation.
 
-    Args:
-        candidate (ConfigCandidate): The candidate that was evaluated.
-        success (bool, optional): Whether the evaluation was successful. Defaults to True.
+    :param candidate: The candidate that was evaluated.
+    :type candidate: ConfigCandidate
+    :param success: Whether the evaluation was successful, defaults to True.
+    :type success: bool, optional
     """
     if success:
         logging.info(f"Trial successful: {candidate}")
@@ -253,17 +254,22 @@ class RandomSearchOptimizer(BaseOptimizer):
         """
         Initialize the RandomSearchOptimizer.
 
-        Args:
-            hp_space (HyperParameterSpace): The hyperparameter space to explore.
-            evaluation_function (Callable[[Dict[str, Any], int], float]): 
-                Function to evaluate a hyperparameter configuration.
-            max_fidelity (int, optional): Maximum fidelity level for evaluations. Defaults to 1.
-            sh_eta (float, optional): Successive halving proportion. Defaults to 0.5.
-            maximize (bool, optional): Whether to maximize the evaluation score. Defaults to False.
-            score_aggregation (str, optional): Method to aggregate scores. Defaults to "average".
-            score_aggregation_function (Optional[Callable[[List[float]], float]], optional): 
-                Custom score aggregation function. Defaults to None.
-            log_results (bool, optional): Whether to log evaluation results. Defaults to False.
+        :param hp_space: The hyperparameter space to explore.
+        :type hp_space: HyperParameterSpace
+        :param evaluation_function: Function to evaluate a hyperparameter configuration.
+        :type evaluation_function: Callable[[Dict[str, Any], int], float]
+        :param max_fidelity: Maximum fidelity level for evaluations, defaults to 1.
+        :type max_fidelity: int, optional
+        :param sh_eta: Successive halving proportion, defaults to 0.5.
+        :type sh_eta: float, optional
+        :param maximize: Whether to maximize the evaluation score, defaults to False.
+        :type maximize: bool, optional
+        :param score_aggregation: Method to aggregate scores, defaults to "average".
+        :type score_aggregation: str, optional
+        :param score_aggregation_function: Custom score aggregation function, defaults to None.
+        :type score_aggregation_function: Optional[Callable[[List[float]], float]], optional
+        :param log_results: Whether to log evaluation results, defaults to False.
+        :type log_results: bool, optional
         """
         super().__init__(
             hp_space,
@@ -283,14 +289,14 @@ class RandomSearchOptimizer(BaseOptimizer):
         Samples configurations randomly and evaluates them using successive halving
         until the budget or time is exhausted.
 
-        Args:
-            population_size (int, optional): Number of configurations to sample in each iteration. Defaults to 10.
-            budget (int, optional): Total number of evaluations allowed. Defaults to 100.
-            max_time (Optional[int], optional): Maximum time (in seconds) allowed for optimization. 
-                If None, no time limit is imposed. Defaults to None.
-
-        Returns:
-            ConfigCandidate: The best candidate found during optimization.
+        :param population_size: Number of configurations to sample in each iteration, defaults to 10.
+        :type population_size: int, optional
+        :param budget: Total number of evaluations allowed, defaults to 100.
+        :type budget: int, optional
+        :param max_time: Maximum time (in seconds) allowed for optimization. If None, no time limit is imposed, defaults to None.
+        :type max_time: Optional[int], optional
+        :return: The best candidate found during optimization.
+        :rtype: ConfigCandidate
         """
         session_context = SessionContext(budget=budget, max_time=max_time, log_results=self.log_results)
         while session_context.can_continue_running():
@@ -333,21 +339,28 @@ class HillClimbingOptimizer(BaseOptimizer):
         """
         Initialize the HillClimbingOptimizer.
 
-        Args:
-            hp_space (HyperParameterSpace): The hyperparameter space to explore.
-            evaluation_function (Callable[[Dict[str, Any], int], float]): 
-                Function to evaluate a hyperparameter configuration.
-            max_fidelity (int, optional): Maximum fidelity level for evaluations. Defaults to 1.
-            sh_eta (float, optional): Successive halving proportion. Defaults to 0.5.
-            maximize (bool, optional): Whether to maximize the evaluation score. Defaults to False.
-            score_aggregation (str, optional): Method to aggregate scores. Defaults to "average".
-            score_aggregation_function (Optional[Callable[[List[float]], float]], optional): 
-                Custom score aggregation function. Defaults to None.
-            initial_config (Optional[dict], optional): Initial hyperparameter configuration. 
-                If None, starts with random configurations. Defaults to None.
-            warm_start (int, optional): Number of initial configurations to explore randomly. Defaults to 0.
-            random_restarts (int, optional): Number of random restarts to perform to escape local optima. Defaults to 5.
-            log_results (bool, optional): Whether to log evaluation results. Defaults to False.
+        :param hp_space: The hyperparameter space to explore.
+        :type hp_space: HyperParameterSpace
+        :param evaluation_function: Function to evaluate a hyperparameter configuration.
+        :type evaluation_function: Callable[[Dict[str, Any], int], float]
+        :param max_fidelity: Maximum fidelity level for evaluations, defaults to 1.
+        :type max_fidelity: int, optional
+        :param sh_eta: Successive halving proportion, defaults to 0.5.
+        :type sh_eta: float, optional
+        :param maximize: Whether to maximize the evaluation score, defaults to False.
+        :type maximize: bool, optional
+        :param score_aggregation: Method to aggregate scores, defaults to "average".
+        :type score_aggregation: str, optional
+        :param score_aggregation_function: Custom score aggregation function, defaults to None.
+        :type score_aggregation_function: Optional[Callable[[List[float]], float]], optional
+        :param initial_config: Initial hyperparameter configuration. If None, starts with random configurations, defaults to None.
+        :type initial_config: Optional[dict], optional
+        :param warm_start: Number of initial configurations to explore randomly, defaults to 0.
+        :type warm_start: int, optional
+        :param random_restarts: Number of random restarts to perform to escape local optima, defaults to 5.
+        :type random_restarts: int, optional
+        :param log_results: Whether to log evaluation results, defaults to False.
+        :type log_results: bool, optional
         """
         super().__init__(
             hp_space,
@@ -370,12 +383,12 @@ class HillClimbingOptimizer(BaseOptimizer):
         Starts from an initial configuration and iteratively explores neighboring configurations
         to find a better candidate. Stops when no better neighbors are found or when the budget/time is exhausted.
 
-        Args:
-            session_context (SessionContext): Context managing the optimization session.
-            restart_number (int, optional): The current restart iteration number. Defaults to 0.
-
-        Returns:
-            ConfigCandidate: The best candidate found in this hill climbing round.
+        :param session_context: Context managing the optimization session.
+        :type session_context: SessionContext
+        :param restart_number: The current restart iteration number, defaults to 0.
+        :type restart_number: int, optional
+        :return: The best candidate found in this hill climbing round.
+        :rtype: ConfigCandidate
         """
         starting_configs = []
         if self.initial_config and restart_number == 0:
@@ -425,13 +438,12 @@ class HillClimbingOptimizer(BaseOptimizer):
         Initiates multiple hill climbing rounds with random restarts to explore different regions
         of the hyperparameter space and avoid getting stuck in local optima.
 
-        Args:
-            max_time (Optional[int], optional): Maximum time (in seconds) allowed for optimization. 
-                If None, no time limit is imposed. Defaults to None.
-            budget (int, optional): Total number of evaluations allowed. Defaults to 100.
-
-        Returns:
-            ConfigCandidate: The best candidate found during optimization.
+        :param max_time: Maximum time (in seconds) allowed for optimization. If None, no time limit is imposed, defaults to None.
+        :type max_time: Optional[int], optional
+        :param budget: Total number of evaluations allowed, defaults to 100.
+        :type budget: int, optional
+        :return: The best candidate found during optimization.
+        :rtype: ConfigCandidate
         """
         session_context = SessionContext(budget=budget, max_time=max_time, log_results=self.log_results)
 
@@ -480,23 +492,34 @@ class GeneticAlgorithmOptimizer(BaseOptimizer):
         """
         Initialize the GeneticAlgorithmOptimizer.
 
-        Args:
-            hp_space (HyperParameterSpace): The hyperparameter space to explore.
-            evaluation_function (Callable[[Dict[str, Any], int], float]): 
-                Function to evaluate a hyperparameter configuration.
-            max_fidelity (int, optional): Maximum fidelity level for evaluations. Defaults to 1.
-            sh_eta (float, optional): Successive halving proportion. Defaults to 0.5.
-            maximize (bool, optional): Whether to maximize the evaluation score. Defaults to False.
-            score_aggregation (str, optional): Method to aggregate scores. Defaults to "average".
-            score_aggregation_function (Optional[Callable[[List[float]], float]], optional): 
-                Custom score aggregation function. Defaults to None.
-            population_size (int, optional): Number of individuals in the population. Defaults to 20.
-            crossover_rate (float, optional): Probability of crossover between parents. Defaults to 0.8.
-            mutation_rate (float, optional): Probability of mutation in offspring. Defaults to 0.1.
-            elitism (int, optional): Number of top individuals to carry over to the next generation. Defaults to 1.
-            tournament_size (int, optional): Number of individuals competing in tournament selection. Defaults to 3.
-            min_population_size (int, optional): Minimum population size to maintain diversity. Defaults to 5.
-            log_results (bool, optional): Whether to log evaluation results. Defaults to False.
+        :param hp_space: The hyperparameter space to explore.
+        :type hp_space: HyperParameterSpace
+        :param evaluation_function: Function to evaluate a hyperparameter configuration.
+        :type evaluation_function: Callable[[Dict[str, Any], int], float]
+        :param max_fidelity: Maximum fidelity level for evaluations, defaults to 1.
+        :type max_fidelity: int, optional
+        :param sh_eta: Successive halving proportion, defaults to 0.5.
+        :type sh_eta: float, optional
+        :param maximize: Whether to maximize the evaluation score, defaults to False.
+        :type maximize: bool, optional
+        :param score_aggregation: Method to aggregate scores, defaults to "average".
+        :type score_aggregation: str, optional
+        :param score_aggregation_function: Custom score aggregation function, defaults to None.
+        :type score_aggregation_function: Optional[Callable[[List[float]], float]], optional
+        :param population_size: Number of individuals in the population, defaults to 20.
+        :type population_size: int, optional
+        :param crossover_rate: Probability of crossover between parents, defaults to 0.8.
+        :type crossover_rate: float, optional
+        :param mutation_rate: Probability of mutation in offspring, defaults to 0.1.
+        :type mutation_rate: float, optional
+        :param elitism: Number of top individuals to carry over to the next generation, defaults to 1.
+        :type elitism: int, optional
+        :param tournament_size: Number of individuals competing in tournament selection, defaults to 3.
+        :type tournament_size: int, optional
+        :param min_population_size: Minimum population size to maintain diversity, defaults to 5.
+        :type min_population_size: int, optional
+        :param log_results: Whether to log evaluation results, defaults to False.
+        :type log_results: bool, optional
         """
         super().__init__(
             hp_space,
@@ -522,12 +545,12 @@ class GeneticAlgorithmOptimizer(BaseOptimizer):
         For each hyperparameter, the offspring inherits the value from one of the parents
         based on the crossover rate.
 
-        Args:
-            parent1 (dict): The first parent configuration.
-            parent2 (dict): The second parent configuration.
-
-        Returns:
-            dict: The offspring configuration resulting from crossover.
+        :param parent1: The first parent configuration.
+        :type parent1: dict
+        :param parent2: The second parent configuration.
+        :type parent2: dict
+        :return: The offspring configuration resulting from crossover.
+        :rtype: dict
         """
         offspring = {}
         for key in parent1.keys():
@@ -544,11 +567,10 @@ class GeneticAlgorithmOptimizer(BaseOptimizer):
         Each hyperparameter has a chance to be mutated based on the mutation rate.
         Mutation replaces the hyperparameter value with a new sampled value from its space.
 
-        Args:
-            config (dict): The configuration to mutate.
-
-        Returns:
-            dict: The mutated configuration.
+        :param config: The configuration to mutate.
+        :type config: dict
+        :return: The mutated configuration.
+        :rtype: dict
         """
         mutated_config = copy.deepcopy(config)
         for key in mutated_config.keys():
@@ -560,11 +582,10 @@ class GeneticAlgorithmOptimizer(BaseOptimizer):
         """
         Select parents for crossover using tournament selection.
 
-        Args:
-            candidates (List[ConfigCandidate]): List of fully evaluated candidates.
-
-        Returns:
-            List[ConfigCandidate]: List of selected parent candidates.
+        :param candidates: List of fully evaluated candidates.
+        :type candidates: List[ConfigCandidate]
+        :return: List of selected parent candidates.
+        :rtype: List[ConfigCandidate]
         """
         fully_evaluated_candidates = [c for c in candidates if c.is_fully_evaluated]
         selected_parents = []
@@ -578,11 +599,10 @@ class GeneticAlgorithmOptimizer(BaseOptimizer):
         """
         Generate new population configurations through crossover and mutation.
 
-        Args:
-            parents (List[ConfigCandidate]): List of parent candidates selected for reproduction.
-
-        Returns:
-            List[dict]: List of offspring configurations.
+        :param parents: List of parent candidates selected for reproduction.
+        :type parents: List[ConfigCandidate]
+        :return: List of offspring configurations.
+        :rtype: List[dict]
         """
         new_population_configs = []
         for i in range(0, len(parents), 2):
@@ -601,13 +621,12 @@ class GeneticAlgorithmOptimizer(BaseOptimizer):
         Evolves a population of configurations through selection, crossover, and mutation
         until the budget or time is exhausted.
 
-        Args:
-            budget (int, optional): Total number of evaluations allowed. Defaults to 100.
-            max_time (Optional[int], optional): Maximum time (in seconds) allowed for optimization. 
-                If None, no time limit is imposed. Defaults to None.
-
-        Returns:
-            ConfigCandidate: The best candidate found during optimization.
+        :param budget: Total number of evaluations allowed, defaults to 100.
+        :type budget: int, optional
+        :param max_time: Maximum time (in seconds) allowed for optimization. If None, no time limit is imposed, defaults to None.
+        :type max_time: Optional[int], optional
+        :return: The best candidate found during optimization.
+        :rtype: ConfigCandidate
         """
         session_context = SessionContext(budget=budget, max_time=max_time, log_results=self.log_results)
 

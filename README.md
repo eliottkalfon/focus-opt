@@ -1,7 +1,3 @@
-Certainly! Here's the updated README with badges (tags) included at the top and the license updated to Apache 2.0.
-
----
-
 # **focus_opt**: Multi-Fidelity Hyperparameter Optimization
 
 [![PyPI version](https://badge.fury.io/py/focus-opt.svg)](https://badge.fury.io/py/focus-opt)
@@ -327,9 +323,7 @@ def evaluation_function(config: Dict[str, Any], fidelity: int) -> float:
 Ensure you have the following packages installed:
 
 - **Python**: 3.8 or higher
-- **scikit-learn**
-- **numpy**
-- **scipy**
+- **numpy**: 1.26
 
 These dependencies are automatically installed when you install `focus_opt` using `pip`.
 
@@ -349,7 +343,7 @@ Please ensure your code adheres to the existing style standards and includes app
 
 ## License
 
-This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache License 2.0. See the [LICENSE](https://opensource.org/license/apache-2-0) for details.
 
 ---
 
@@ -364,5 +358,3 @@ Feel free to reach out if you have any questions or need further assistance!
 - **Documentation**: Comprehensive documentation is available on [Read the Docs](https://focus-opt.readthedocs.io/en/latest/).
 - **Continuous Integration**: The project uses GitHub Actions for automated testing and code quality checks.
 - **Code Style**: The codebase follows the [Black](https://github.com/psf/black) code style for consistency.
-
----

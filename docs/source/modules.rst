@@ -5,5 +5,3 @@ focus-opt
    :maxdepth: 4
 
    focus_opt
-   setup
-   tests

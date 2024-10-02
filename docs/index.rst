@@ -9,8 +9,9 @@ Welcome to focus-opt's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-
-
+   
+   readme
+   source/modules
 
 Indices and tables
 ==================
