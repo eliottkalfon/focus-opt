@@ -1,4 +1,4 @@
-# <img src="https://github.com/eliottkalfon/focus-opt/tree/main/assets/focus_opt_transparent.png" alt="Logo" width="50" height="50" style="vertical-align: middle;"> **focus-opt**: Multi-Fidelity Hyperparameter Optimization
+# **focus-opt**: Multi-Fidelity Hyperparameter Optimization
 
 [![PyPI version](https://badge.fury.io/py/focus-opt.svg)](https://badge.fury.io/py/focus-opt)
 [![Python versions](https://img.shields.io/pypi/pyversions/focus-opt.svg)](https://pypi.org/project/focus-opt/)
