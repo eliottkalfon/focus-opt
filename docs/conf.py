@@ -29,6 +29,7 @@ author = 'Eliott Kalfon'
 # ones.
 extensions = [
     'myst_parser',
+    'sphinx_favicon',
     'sphinx.ext.autodoc',
 ]
 
@@ -54,6 +55,8 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
 source_suffix = ['.rst', '.md']
+
+favicons = ['focus_opt.png']
 
 allowed_include_paths = [os.path.abspath('..')]
 

@@ -1,11 +1,10 @@
-# **focus_opt**: Multi-Fidelity Hyperparameter Optimization
+# <img src="https://github.com/eliottkalfon/focus-opt/tree/main/assets/focus_opt_transparent.png" alt="Logo" width="50" height="50" style="vertical-align: middle;"> **focus-opt**: Multi-Fidelity Hyperparameter Optimization
 
 [![PyPI version](https://badge.fury.io/py/focus-opt.svg)](https://badge.fury.io/py/focus-opt)
 [![Python versions](https://img.shields.io/pypi/pyversions/focus-opt.svg)](https://pypi.org/project/focus-opt/)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/license/apache-2-0)
 [![Downloads](https://pepy.tech/badge/focus-opt)](https://pepy.tech/project/focus-opt)
 [![Documentation Status](https://readthedocs.org/projects/focus-opt/badge/?version=latest)](https://focus-opt.readthedocs.io/en/latest/?badge=latest)
-[![Build Status](https://github.com/eliottka/focus_opt/actions/workflows/ci.yml/badge.svg)](https://github.com/eliottka/focus_opt/actions)
 [![Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 ## Introduction
